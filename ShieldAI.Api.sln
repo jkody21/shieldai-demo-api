@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2006
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShieldAI.Api", "ShieldAI.Api\ShieldAI.Api.csproj", "{DD85D217-A53B-4047-82C8-0EAC10EDA755}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShieldAI.Core", "..\ShieldAI.Core\ShieldAI.Core.csproj", "{090DA5E0-DA0B-4112-AA45-0DDAB60C7192}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShieldAI.Service", "ShieldAI.Service\ShieldAI.Service.csproj", "{C32D8493-2ED3-4B66-9262-7DD57611FAA5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Database", "Database", "{28AEC422-75F6-4C52-B6DF-0520AA88858A}"
+	ProjectSection(SolutionItems) = preProject
+		FlightLog.sql = FlightLog.sql
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DD85D217-A53B-4047-82C8-0EAC10EDA755}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD85D217-A53B-4047-82C8-0EAC10EDA755}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD85D217-A53B-4047-82C8-0EAC10EDA755}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD85D217-A53B-4047-82C8-0EAC10EDA755}.Release|Any CPU.Build.0 = Release|Any CPU
+		{090DA5E0-DA0B-4112-AA45-0DDAB60C7192}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{090DA5E0-DA0B-4112-AA45-0DDAB60C7192}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{090DA5E0-DA0B-4112-AA45-0DDAB60C7192}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{090DA5E0-DA0B-4112-AA45-0DDAB60C7192}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C32D8493-2ED3-4B66-9262-7DD57611FAA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C32D8493-2ED3-4B66-9262-7DD57611FAA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C32D8493-2ED3-4B66-9262-7DD57611FAA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C32D8493-2ED3-4B66-9262-7DD57611FAA5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B5C313B3-ACC8-4017-A1FB-5582FCA2A253}
+	EndGlobalSection
+EndGlobal
