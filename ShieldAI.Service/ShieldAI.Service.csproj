@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ShieldAI.Core\ShieldAI.Core.csproj" />
+    <ProjectReference Include="..\ShieldAI.Core\ShieldAI.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
