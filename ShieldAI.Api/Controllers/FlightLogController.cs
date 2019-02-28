@@ -7,6 +7,9 @@ using ShieldAI.Core;
 using System.Net.Http;
 using System.Net;
 using System.Text;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace ShieldAI.Api.Controllers {
     [Route("flightlog")]

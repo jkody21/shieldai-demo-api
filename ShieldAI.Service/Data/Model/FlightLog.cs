@@ -3,6 +3,8 @@
 namespace ShieldAI.Service.Data.Model {
     public class FlightLog
     {
+        public FlightLog() { }
+
         public long FlightLogId { get; set; }
 
         public int DroneId { get; set; }

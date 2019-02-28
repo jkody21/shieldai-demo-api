@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -114,12 +115,14 @@ namespace ShieldAI.Service {
                        ,@EndOn
                        ,@Latitude
                        ,@Longitude
-                       ,@MapPath)
+                       ,@MapPath);
+                SELECT SCOPE_IDENTITY();
             ";
 
-            var flightId = await this.WithConnection<int>(c =>
-                c.ExecuteAsync(sql, log)
-                );
+            var flightId = await this.WithConnection<int>(async c => {
+                var id =  await c.QueryAsync<int>(sql, log);
+                return id.FirstOrDefault();
+                });
 
             log.FlightLogId = flightId;
             return GetActionStatus<FlightLog>().SetReturnData(log);
@@ -135,32 +138,38 @@ namespace ShieldAI.Service {
         public async Task<ActionStatus<bool>> BulkInsertFlightLog(IEnumerable<FlightLog> flights) {
             var status = GetActionStatus<bool>();
 
-            var result = await this.WithConnection<bool>(async c => {
-                var conn = (SqlConnection)c;
+            try { 
+                var result = await this.WithConnection<bool>(async c => {
+                    var conn = (SqlConnection)c;
 
-                using (var copy = new SqlBulkCopy(conn)) {
-                    copy.DestinationTableName = "FlightLog";
-                    DataTable table = BuildBulkFlightLogUpdateTable();
+                    using (var copy = new SqlBulkCopy(conn)) {
+                        copy.DestinationTableName = "FlightLog";
+                        var table = BuildBulkFlightLogUpdateTable();
 
-                    foreach (var f in flights) {
-                        table.Rows.Add(
-                            f.DroneId,
-                            f.DroneGeneration,
-                            f.BeginOn,
-                            f.EndOn,
-                            f.Latitude,
-                            f.Longitude,
-                            f.MapPath
-                            );
+                        foreach (var f in flights) {
+                            table.Rows.Add(
+                                0,
+                                f.DroneId,
+                                f.DroneGeneration,
+                                f.BeginOn,
+                                f.EndOn,
+                                f.Latitude,
+                                f.Longitude,
+                                f.MapPath
+                                );
+                        }
+
+                        await copy.WriteToServerAsync(table);
+
+                        return true;
                     }
+                });
 
-                    await copy.WriteToServerAsync(table);
-
-                    return true;
-                }
-            });
-
-            return status.SetReturnData(result);
+                return status.SetReturnData(result);
+            } catch(Exception ex) {
+                var msg = ex.Message;
+                throw;
+            }
         }
 
 
@@ -172,6 +181,7 @@ namespace ShieldAI.Service {
         private static DataTable BuildBulkFlightLogUpdateTable() {
             var table = new DataTable("FlightLog");
 
+            table.Columns.Add("FlightLogId", typeof(long));
             table.Columns.Add("DroneId", typeof(int));
             table.Columns.Add("DroneGeneration", typeof(int));
             table.Columns.Add("BeginOn", typeof(DateTime));
