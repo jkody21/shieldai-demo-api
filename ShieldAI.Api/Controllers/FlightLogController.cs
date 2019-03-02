@@ -29,9 +29,9 @@ namespace ShieldAI.Api.Controllers {
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<IEnumerable<FlightLog>> Get()
+        public async Task<IEnumerable<FlightLog>> Get(FlightLogRequest request)
         {
-            var results = await  _flightEngine.FindFlights(new FlightLogRequest() { DroneId = 121 });
+            var results = await  _flightEngine.FindFlights(request);
             return results.ReturnData;
 
         }

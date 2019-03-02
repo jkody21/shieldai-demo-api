@@ -12,6 +12,8 @@ namespace ShieldAI.Api {
         private const string API_NAME = "ShieldAI Demo API";
         private const string API_VERSION = "V1";
 
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -26,6 +28,20 @@ namespace ShieldAI.Api {
 
             //---IOC/DI configuration
             services.AddScoped<IFlightEngine, FlightEngine>();
+
+            //---CORS
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost")
+                        .AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+            });
+
 
             services.AddSwaggerGen(c =>
             {
@@ -42,6 +58,8 @@ namespace ShieldAI.Api {
             }
 
             app.UseSwagger();
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), 
             // specifying the Swagger JSON endpoint.

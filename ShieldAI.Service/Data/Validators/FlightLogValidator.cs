@@ -9,8 +9,8 @@ namespace ShieldAI.Service.Data.Validators {
             RuleFor(x => x.DroneGeneration).NotEmpty().WithMessage("DroneGeneration is required");
             RuleFor(x => x.BeginOn).NotEmpty();
             RuleFor(x => x.EndOn).NotEmpty();
-            RuleFor(x => x.Longitude).InclusiveBetween(-180.0, 180.0).WithMessage("Longitude is not in a valid range");
-            RuleFor(x => x.Latitude).InclusiveBetween(-90.0, 90.0).WithMessage("Latitude is not in a valid range"); ;
+            RuleFor(x => x.Longitude).InclusiveBetween(-90, 90).WithMessage("Longitude is not in a valid range");
+            RuleFor(x => x.Latitude).InclusiveBetween(-180, 180).WithMessage("Latitude is not in a valid range"); ;
         }
     }
 }

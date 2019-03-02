@@ -28,6 +28,10 @@ namespace ShieldAI.Service {
                       WHERE 1 = 1";
 
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="configuration"></param>
         public FlightEngine(IConfiguration configuration) : base(configuration) {
 
         }
@@ -38,22 +42,61 @@ namespace ShieldAI.Service {
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<ActionStatus<IEnumerable<FlightLog>>> FindFlights(FlightLogRequest request) {
+        public async Task<ActionStatus<IEnumerable<FlightLog>>> FindFlights(FlightLogRequest request)
+        {
             var status = new ActionStatus<IEnumerable<FlightLog>>();
 
             var sql = GetSqlBuilder();
-            sql.AppendLine("AND DroneId = ISNULL(@DroneId, DroneId)");
-                
+            ApplyFiltersToSql(request, sql);
+
             var flightLogs =
                 await WithConnection<IEnumerable<FlightLog>>(
-                    async c => 
-                        await c.QueryAsync<FlightLog>(sql.ToString(), new { DroneId = request.DroneId })
+                    async c =>
+                        await c.QueryAsync<FlightLog>(sql.ToString(), request)
                 );
 
             var flightLogList = flightLogs.ToList();
 
             status.SetReturnData(flightLogList);
             return status;
+        }
+
+
+        /// <summary>
+        /// Build the SQL statement based on the values contained in the 
+        /// request object
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="sql"></param>
+        private static void ApplyFiltersToSql(FlightLogRequest request, StringBuilder sql)
+        {
+            if (request.IsNotNull())
+            {
+                if (request.DroneId.HasValue)
+                    sql.AppendLine("AND DroneId = @DroneId");
+
+                if (request.From.HasValue)
+                    sql.AppendLine("AND BeginOn >= @From");
+
+                if (request.To.HasValue)
+                    sql.AppendLine("AND EndOn <= @To");
+
+                if (request.DroneGeneration.HasValue)
+                    sql.AppendLine("AND DroneGeneration = @DroneGeneration");
+
+                var box = GetBoundingBox(request);
+
+                if(box.IsNotNull())
+                {
+                    request.MinLatitude = box.MinimumLatitude;
+                    request.MaxLatitude = box.MaximumLatitude;
+                    request.MinLongitude = box.MinimumLongitude;
+                    request.MaxLongitude = box.MaximumLongitude;
+
+                    sql.AppendLine("AND Latitude BETWEEN @MinLatitude AND @MaxLatitude");
+                    sql.AppendLine("AND Longitude BETWEEN @MinLongitude AND @MaxLongitude");
+                }
+            }
         }
 
 
@@ -203,6 +246,27 @@ namespace ShieldAI.Service {
             builder.AppendLine(FLIGHTLOG_SQL_BASE);
 
             return builder;
+        }
+
+
+        /// <summary>
+        /// Checks to see if a bounding box can be created.
+        /// If possible, return the result
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        private static BoundingBox GetBoundingBox(FlightLogRequest request)
+        {
+            if (!request.CanCreateBoundingBox)
+                return null;
+
+            var box = GeoHelper.GetBoundingBox(
+                request.Longitude.Value,
+                request.Latitude.Value,
+                request.Distance.Value);
+
+            return box;
+
         }
     }
 }
