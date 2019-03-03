@@ -9,6 +9,8 @@ namespace ShieldAI.Service {
         Task<ActionStatus<IEnumerable<FlightLog>>> FindFlights(FlightLogRequest request);
         Task<ActionStatus<IEnumerable<FlightLog>>> FindFlights();
 
+        Task<ActionStatus<FlightLogMetrics>> GetFlightLogMetrics();
+
         Task<ActionStatus<FlightLog>> GetFlight(int id);
 
         Task<ActionStatus<FlightLog>> InsertFlightLog(FlightLog log);

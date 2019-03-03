@@ -67,3 +67,98 @@ REFERENCES [dbo].[Drone] ([DroneId])
 GO
 ALTER TABLE [dbo].[FlightLog] CHECK CONSTRAINT [FK_FlightLog_Drone]
 GO
+
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_GetFlightLogMetrics]
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    DECLARE @FlightCount INT;
+	DECLARE @HighestDuration INT;
+	DECLARE @LowestDuration INT;
+	DECLARE @FirstFlight DATETIME;
+	DECLARE @MostRecentFlight DATETIME;
+	DECLARE @LaziestDroneName VARCHAR(32);
+	DECLARE @LaziestDroneId INT;
+	DECLARE @LaziestDroneMissions INT;
+	DECLARE @BusiestDroneName VARCHAR(32);
+	DECLARE @BusiestDroneId INT;
+	DECLARE @BusiestDroneMissions INT;
+	DECLARE @BusiestGeneration INT;
+	DECLARE @BusiestGenerationMissions INT;
+
+	SELECT @FlightCount = COUNT(*) FROM [ShieldAI].[dbo].[FlightLog];
+	SELECT @HighestDuration = MAX(DATEDIFF(mi, BeginOn, EndOn)) FROM [ShieldAI].[dbo].[FlightLog];
+	SELECT @LowestDuration = MAX(DATEDIFF(mi, BeginOn, EndOn)) FROM [ShieldAI].[dbo].[FlightLog];
+	SELECT @FirstFlight = MIN(BeginOn) FROM [ShieldAI].[dbo].[FlightLog];
+	SELECT @MostRecentFlight = MIN(BeginOn) FROM [ShieldAI].[dbo].[FlightLog];
+
+	SELECT	@BusiestGeneration = BG.DroneGeneration,
+			@BusiestGenerationMissions = BG.MissionCount
+	FROM (
+		SELECT TOP 1 
+				DroneGeneration, 
+				COUNT(*) AS MissionCount
+			FROM [ShieldAI].[dbo].[FlightLog] 
+			GROUP BY DroneGeneration 
+			ORDER BY COUNT(*) DESC
+	) BG;
+
+	---busiest drone
+	SELECT	@BusiestDroneName = D.[Name],
+			@BusiestDroneId = D.[DroneId],
+			@BusiestDroneMissions = M.MissionCount
+	FROM
+		[ShieldAI].[dbo].[Drone] D
+			INNER JOIN (
+				SELECT TOP 1 
+					DroneId, 
+					COUNT(*) AS MissionCount
+				FROM [ShieldAI].[dbo].[FlightLog] 
+				GROUP BY DroneId 
+				ORDER BY COUNT(*) DESC) M
+			ON D.DroneId = M.DroneId;
+
+	---laziest drone
+	SELECT	@LaziestDroneName = D.[Name],
+			@LaziestDroneId = D.[DroneId],
+			@LaziestDroneMissions = M.MissionCount
+	FROM
+		[ShieldAI].[dbo].[Drone] D
+			LEFT JOIN (
+				SELECT TOP 1 
+					DroneId, 
+					COUNT(*) AS MissionCount
+				FROM [ShieldAI].[dbo].[FlightLog] 
+				GROUP BY DroneId 
+				ORDER BY COUNT(*)) M
+			ON D.DroneId = M.DroneId;
+
+	SELECT	@FlightCount AS FlightCount,
+			@HighestDuration AS HightestDuration,
+			@LowestDuration AS LowestDuration,
+			@FirstFlight AS FirstFlight,
+			@MostRecentFlight AS MostRecentFlight,
+			@LaziestDroneName AS LaziestDroneName,
+			@LaziestDroneId AS LaziestDroneId,
+			@LaziestDroneMissions AS LaziestDroneMissions,
+			@BusiestDroneName AS BusiestDroneName,
+			@BusiestDroneId AS BusiestDroneId,
+			@BusiestDroneMissions AS BusiestDroneMissions,
+			@BusiestGeneration AS BusiestGeneration,
+			@BusiestGenerationMissions AS BusiestGenerationMissions;
+END
+GO

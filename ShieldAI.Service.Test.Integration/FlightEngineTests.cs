@@ -39,6 +39,21 @@ namespace ShieldAI.Service.Test.Integration
 
 
         /// <summary>
+        /// test to view the flight-log metrics
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task should_find_flight_log_metrics()
+        {
+            var engine = SetupHelper.GetConfiguredFlightEngine();
+
+            var result = await engine.GetFlightLogMetrics();
+
+            result.Should().NotBeNull();
+        }
+
+
+        /// <summary>
         /// Test inserting a flight log entry
         /// </summary>
         /// <returns></returns>

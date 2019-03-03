@@ -67,6 +67,26 @@ namespace ShieldAI.Service {
 
 
         /// <summary>
+        /// return flight-log metrics
+        /// </summary>
+        /// <returns></returns>
+        public async Task<ActionStatus<FlightLogMetrics>> GetFlightLogMetrics()
+        {
+            var status = GetActionStatus<FlightLogMetrics>();
+
+            var metrics =
+               await WithConnection<IEnumerable<FlightLogMetrics>>(
+                   async c =>
+                       await c.QueryAsync<FlightLogMetrics>("usp_GetFlightLogMetrics", null, null, null, CommandType.StoredProcedure)
+               );
+
+            status.SetReturnData(metrics.FirstOrDefault());
+
+            return status;
+        }
+
+
+        /// <summary>
         /// Build the SQL statement based on the values contained in the 
         /// request object
         /// </summary>

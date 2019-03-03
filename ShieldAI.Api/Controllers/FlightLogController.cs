@@ -50,6 +50,20 @@ namespace ShieldAI.Api.Controllers {
 
 
         /// <summary>
+        /// Return the flight-log metrics
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("metrics")]
+        public async Task<FlightLogMetrics> Metrics()
+        {
+            var results = await _flightEngine.GetFlightLogMetrics();
+            return results.ReturnData;
+        }
+
+
+        /// <summary>
         /// insert a new flight log record
         /// </summary>
         /// <param name="value"></param>
