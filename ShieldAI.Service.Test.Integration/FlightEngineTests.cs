@@ -51,8 +51,8 @@ namespace ShieldAI.Service.Test.Integration
                 DroneId = 321,
                 DroneGeneration = 1,
                 BeginOn = DateTime.Now,
-                EndOn = DateTime.Now.AddDays(2),
-                Longitude = 87.6298,
+                EndOn = DateTime.Now.AddDays(-2),
+                Longitude = -87.6298,
                 Latitude = 41.8781,
                 MapPath = Guid.NewGuid().ToString()
             };
