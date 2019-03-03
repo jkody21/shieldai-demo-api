@@ -33,8 +33,8 @@ namespace ShieldAI.Api.Controllers {
         {
             var results = await  _flightEngine.FindFlights(request);
             return results.ReturnData;
-
         }
+
 
         /// <summary>
         /// Return an individual flight log record

@@ -23,9 +23,11 @@ namespace ShieldAI.Service.Test.Integration
                 //From = new System.DateTime(2019, 2, 1),
                 //To = new System.DateTime(2019, 2, 10),
                 //DroneGeneration = 6,
-                Latitude = 32.7157,
-                Longitude = 117.1611,
-                Distance = 10.0
+                //Latitude = 32.7157,
+                //Longitude = 117.1611,
+                //Distance = 10.0,
+                DurationLow = 10,
+                DurationHigh = 30,
             };
 
             var engine = SetupHelper.GetConfiguredFlightEngine();

@@ -1,12 +1,14 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ShieldAI.Service.Test.Integration
 {
     public static class SetupHelper
     {
+
+        /// <summary>
+        /// returns a configured flight log engine
+        /// </summary>
+        /// <returns></returns>
         public static IFlightEngine GetConfiguredFlightEngine()
         {
             var config = GetIConfigurationRoot();
@@ -16,7 +18,24 @@ namespace ShieldAI.Service.Test.Integration
         }
 
 
-        public static IConfigurationRoot GetIConfigurationRoot()
+        /// <summary>
+        /// returns a configured drone engine
+        /// </summary>
+        /// <returns></returns>
+        public static IDroneEngine GetConfiguredDroneEngine()
+        {
+            var config = GetIConfigurationRoot();
+            var engine = new DroneEngine(config);
+
+            return engine;
+        }
+
+
+        /// <summary>
+        /// returns a configured configuration object
+        /// </summary>
+        /// <returns></returns>
+        private static IConfigurationRoot GetIConfigurationRoot()
         {
             return new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")

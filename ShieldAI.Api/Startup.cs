@@ -28,6 +28,7 @@ namespace ShieldAI.Api {
 
             //---IOC/DI configuration
             services.AddScoped<IFlightEngine, FlightEngine>();
+            services.AddScoped<IDroneEngine, DroneEngine>();
 
             //---CORS
             services.AddCors(options =>

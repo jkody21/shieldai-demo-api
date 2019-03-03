@@ -60,6 +60,10 @@ namespace ShieldAI.Service {
             status.SetReturnData(flightLogList);
             return status;
         }
+        public async Task<ActionStatus<IEnumerable<FlightLog>>> FindFlights()
+        {
+            return await FindFlights(null);
+        }
 
 
         /// <summary>
@@ -83,6 +87,12 @@ namespace ShieldAI.Service {
 
                 if (request.DroneGeneration.HasValue)
                     sql.AppendLine("AND DroneGeneration = @DroneGeneration");
+
+                if (request.DurationLow.HasValue)
+                    sql.AppendLine("AND DATEDIFF(mi, BeginOn, EndOn) > @DurationLow");
+
+                if(request.DurationHigh.HasValue)
+                    sql.AppendLine("AND DATEDIFF(mi, BeginOn, EndOn) < @DurationHigh");
 
                 var box = GetBoundingBox(request);
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace ShieldAI.Service
@@ -21,6 +22,11 @@ namespace ShieldAI.Service
         public DateTime? From { get; set; }
 
         public DateTime? To { get; set; }
+
+        public int? DurationLow { get; set; }
+
+        public int? DurationHigh { get; set; }
+
 
         internal bool CanCreateBoundingBox {
             get {

@@ -7,6 +7,7 @@ namespace ShieldAI.Service {
     public interface IFlightEngine
     {
         Task<ActionStatus<IEnumerable<FlightLog>>> FindFlights(FlightLogRequest request);
+        Task<ActionStatus<IEnumerable<FlightLog>>> FindFlights();
 
         Task<ActionStatus<FlightLog>> GetFlight(int id);
 
