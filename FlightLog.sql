@@ -82,6 +82,11 @@ GO
 CREATE PROCEDURE [dbo].[usp_GetFlightLogMetrics]
 AS
 BEGIN
+	/*
+	exec [dbo].[usp_GetFlightLogMetrics]
+	*/
+
+
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
@@ -102,9 +107,9 @@ BEGIN
 
 	SELECT @FlightCount = COUNT(*) FROM [ShieldAI].[dbo].[FlightLog];
 	SELECT @HighestDuration = MAX(DATEDIFF(mi, BeginOn, EndOn)) FROM [ShieldAI].[dbo].[FlightLog];
-	SELECT @LowestDuration = MAX(DATEDIFF(mi, BeginOn, EndOn)) FROM [ShieldAI].[dbo].[FlightLog];
+	SELECT @LowestDuration = MIN(DATEDIFF(mi, BeginOn, EndOn)) FROM [ShieldAI].[dbo].[FlightLog];
 	SELECT @FirstFlight = MIN(BeginOn) FROM [ShieldAI].[dbo].[FlightLog];
-	SELECT @MostRecentFlight = MIN(BeginOn) FROM [ShieldAI].[dbo].[FlightLog];
+	SELECT @MostRecentFlight = MAX(BeginOn) FROM [ShieldAI].[dbo].[FlightLog];
 
 	SELECT	@BusiestGeneration = BG.DroneGeneration,
 			@BusiestGenerationMissions = BG.MissionCount

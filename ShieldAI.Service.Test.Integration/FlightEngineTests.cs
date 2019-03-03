@@ -94,7 +94,7 @@ namespace ShieldAI.Service.Test.Integration
                 FlightLogId = 0,
                 DroneId = 321,
                 DroneGeneration = 111,
-                BeginOn = DateTime.Now,
+                BeginOn = DateTime.Now.AddDays(1),
                 EndOn = DateTime.Now.AddDays(2),
                 Longitude = 71.0589,
                 Latitude = 42.3601,
@@ -106,8 +106,8 @@ namespace ShieldAI.Service.Test.Integration
                 FlightLogId = 0,
                 DroneId = 821,
                 DroneGeneration = 10,
-                BeginOn = DateTime.Now,
-                EndOn = DateTime.Now.AddDays(2),
+                BeginOn = DateTime.Now.AddDays(-1),
+                EndOn = DateTime.Now.AddDays(-2),
                 Longitude = 87.6298,
                 Latitude = 41.8781,
                 MapPath = Guid.NewGuid().ToString()
@@ -116,10 +116,22 @@ namespace ShieldAI.Service.Test.Integration
             request.Add(new FlightLog()
             {
                 FlightLogId = 0,
-                DroneId = 121,
+                DroneId = 345,
                 DroneGeneration = 17,
-                BeginOn = DateTime.Now,
-                EndOn = DateTime.Now.AddDays(2),
+                BeginOn = DateTime.Now.AddDays(-2),
+                EndOn = DateTime.Now.AddDays(-1),
+                Longitude = 71.2478,
+                Latitude = 42.0654,
+                MapPath = Guid.NewGuid().ToString()
+            });
+
+            request.Add(new FlightLog()
+            {
+                FlightLogId = 0,
+                DroneId = 121,
+                DroneGeneration = 11,
+                BeginOn = DateTime.Now.AddDays(-2),
+                EndOn = DateTime.Now.AddDays(-1),
                 Longitude = 71.2478,
                 Latitude = 42.0654,
                 MapPath = Guid.NewGuid().ToString()

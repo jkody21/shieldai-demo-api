@@ -12,7 +12,8 @@ namespace ShieldAI.Service.Test.Integration
         public static IFlightEngine GetConfiguredFlightEngine()
         {
             var config = GetIConfigurationRoot();
-            var engine = new FlightEngine(config);
+            var droneEngine = GetConfiguredDroneEngine();
+            var engine = new FlightEngine(config, droneEngine);
 
             return engine;
         }

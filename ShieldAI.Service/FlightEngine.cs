@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using ShieldAI.Core;
 using ShieldAI.Service.Data.Model;
 using ShieldAI.Service.Data.Validators;
@@ -15,6 +16,7 @@ using System.Threading.Tasks;
 namespace ShieldAI.Service {
     public class FlightEngine : BaseEngine, IFlightEngine {
 
+        private readonly IDroneEngine _droneEngine;
         private const string FLIGHTLOG_SQL_BASE = @"
                     SELECT [FlightLogId]
                           ,[DroneId]
@@ -32,8 +34,11 @@ namespace ShieldAI.Service {
         /// Constructor
         /// </summary>
         /// <param name="configuration"></param>
-        public FlightEngine(IConfiguration configuration) : base(configuration) {
+        public FlightEngine(
+            IConfiguration configuration,
+            IDroneEngine droneEngine) : base(configuration) {
 
+            _droneEngine = droneEngine;
         }
 
 
@@ -161,7 +166,9 @@ namespace ShieldAI.Service {
         /// <returns></returns>
         public async Task<ActionStatus<FlightLog>> InsertFlightLog(FlightLog log) {
             var status = GetActionStatus<FlightLog>();
-            var validator = new FlightLogValidator();
+            var drones = await _droneEngine.FindDrones();
+
+            var validator = new FlightLogValidator(drones.ReturnData.ToList());
             var result = validator.Validate(log);
 
             if(!result.IsValid) {
@@ -210,6 +217,12 @@ namespace ShieldAI.Service {
         /// <returns></returns>
         public async Task<ActionStatus<bool>> BulkInsertFlightLog(IEnumerable<FlightLog> flights) {
             var status = GetActionStatus<bool>();
+            var drones = await _droneEngine.FindDrones();
+            var hasErrors = false;
+            var successCount = 0;
+            var failCount = 0;
+
+            var validator = new FlightLogValidator(drones.ReturnData.ToList());
 
             try { 
                 var result = await this.WithConnection<bool>(async c => {
@@ -220,6 +233,16 @@ namespace ShieldAI.Service {
                         var table = BuildBulkFlightLogUpdateTable();
 
                         foreach (var f in flights) {
+                            var isOk = validator.Validate(f);
+                            if(!isOk.IsValid)
+                            {
+                                failCount++;
+                                hasErrors = true;
+                                status.AddMessage($"Flight not valid.  Skipped in bulk operation. {JsonConvert.SerializeObject(f)}.  {JsonConvert.SerializeObject(isOk)}");
+                                continue;
+                            }
+
+                            successCount++;
                             table.Rows.Add(
                                 0,
                                 f.DroneId,
@@ -237,6 +260,11 @@ namespace ShieldAI.Service {
                         return true;
                     }
                 });
+
+                if(hasErrors) {
+                    status.StatusCode = 400;
+                    status.AddMessage($"One or more bulk entries could not be added due to validation issues. {successCount} succeeded / {failCount} failed.");
+                 }
 
                 return status.SetReturnData(result);
             } catch(Exception ex) {

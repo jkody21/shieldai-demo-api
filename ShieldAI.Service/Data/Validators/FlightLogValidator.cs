@@ -1,12 +1,23 @@
 ﻿using ShieldAI.Service.Data.Model;
 using FluentValidation;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ShieldAI.Service.Data.Validators {
     public class FlightLogValidator : AbstractValidator<FlightLog>
     {
-        public FlightLogValidator() {
+        private readonly List<Drone> _validDrones;
+
+        public FlightLogValidator(List<Drone> validDrones) {
+            _validDrones = validDrones;
+
             RuleFor(x => x.DroneId).NotEmpty().WithMessage("DroneId is required");
+            RuleFor(x => x.DroneId).Custom((id, context) => {
+                if (!_validDrones.Any(d => d.DroneId.Equals(id)))
+                    context.AddFailure("The drone ID must be for a valid and registered drone");
+            });
+
             RuleFor(x => x.DroneGeneration).NotEmpty().WithMessage("DroneGeneration is required");
             RuleFor(x => x.BeginOn).NotEmpty();
             RuleFor(x => x.EndOn).NotEmpty();
