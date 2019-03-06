@@ -150,7 +150,8 @@ BEGIN
 				FROM [ShieldAI].[dbo].[FlightLog] 
 				GROUP BY DroneId 
 				ORDER BY COUNT(*)) M
-			ON D.DroneId = M.DroneId;
+			ON D.DroneId = M.DroneId
+	WHERE M.DroneId IS NOT NULL;
 
 	SELECT	@FlightCount AS FlightCount,
 			@HighestDuration AS HightestDuration,
@@ -166,4 +167,5 @@ BEGIN
 			@BusiestGeneration AS BusiestGeneration,
 			@BusiestGenerationMissions AS BusiestGenerationMissions;
 END
+
 GO
